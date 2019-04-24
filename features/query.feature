@@ -1,6 +1,6 @@
-Feature: It should be possible to run select query
+Feature: It should be possible to send query
 
-    Scenario: Basic select
+    Scenario: Simple query
         When I send query:
             """
             query {
@@ -11,5 +11,23 @@ Feature: It should be possible to run select query
             """
             {
             "hello" :"world"
+            }
+            """
+
+    Scenario: Query with variables
+        When I send query:
+            """
+            query ($blah: String!) {
+            foo(blah: $blah)
+            }
+            """
+        And I have variables:
+            """
+            {"blah":"xxx"}
+            """
+        Then the response should be:
+            """
+            {
+            "foo" :"this is blah: xxx"
             }
             """
