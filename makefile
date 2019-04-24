@@ -25,6 +25,5 @@ push: login
 	docker push $(TAG)
 
 test:
-	docker-compose up -d
-	GRAPHQL_URL=http://localhost:8080/graphql godog
+	docker-compose up test
 	docker-compose down

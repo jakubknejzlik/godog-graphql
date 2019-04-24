@@ -4,3 +4,11 @@ services:
     ports:
       - '8080:80'
     image: 'graphql/hello-world'
+  test:
+    image: jakubknejzlik/godog-graphql
+    links:
+      - hello
+    volumes:
+      - ./features:/godog/features
+    environment:
+      - GRAPHQL_URL=http://hello/graphql
