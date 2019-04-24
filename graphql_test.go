@@ -24,7 +24,9 @@ type gqlFeature struct {
 
 func (f *gqlFeature) iSendQuery(arg1 *gherkin.DocString) error {
 	f.query = arg1.Content
-	return nil
+
+	ctx := context.Background()
+	return f.client.SendQuery(ctx, f.query, f.variables, &f.response)
 }
 
 func (f *gqlFeature) iHaveVariables(arg1 *gherkin.DocString) error {
@@ -32,18 +34,13 @@ func (f *gqlFeature) iHaveVariables(arg1 *gherkin.DocString) error {
 }
 
 func (f *gqlFeature) theResponseShouldBe(arg1 *gherkin.DocString) (err error) {
-	ctx := context.Background()
-	var res interface{}
 	var expected interface{}
 	err = json.Unmarshal([]byte(arg1.Content), &expected)
 	if err != nil {
 		return
 	}
-	err = f.client.SendQuery(ctx, f.query, f.variables, &res)
-	if err != nil {
-		return
-	}
-	if diff := deep.Equal(expected, res); diff != nil {
+
+	if diff := deep.Equal(expected, f.response); diff != nil {
 		err = errors.New(strings.Join(diff, "\n"))
 	}
 	return

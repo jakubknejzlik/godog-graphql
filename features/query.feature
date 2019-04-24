@@ -15,15 +15,15 @@ Feature: It should be possible to send query
             """
 
     Scenario: Query with variables
-        When I send query:
+        When I have variables:
+            """
+            {"blah":"xxx"}
+            """
+        And I send query:
             """
             query ($blah: String!) {
             foo(blah: $blah)
             }
-            """
-        And I have variables:
-            """
-            {"blah":"xxx"}
             """
         Then the response should be:
             """
