@@ -1,0 +1,6 @@
+version: '2'
+services:
+  hello:
+    ports:
+      - '8080:80'
+    image: 'graphql/hello-world'
