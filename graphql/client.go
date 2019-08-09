@@ -33,5 +33,6 @@ func (c *Client) SendQuery(ctx context.Context, query string, variables map[stri
 		req.Var(key, value)
 	}
 
-	return c.c.Run(ctx, req, data)
+	c.c.Run(ctx, req, data)
+	return nil
 }

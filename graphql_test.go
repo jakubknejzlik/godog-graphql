@@ -6,13 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 
 	// "github.com/machinebox/graphql"
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/go-test/deep"
 	"github.com/jakubknejzlik/godog-graphql/graphql"
+	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
 type gqlFeature struct {
@@ -41,7 +41,11 @@ func (f *gqlFeature) theResponseShouldBe(arg1 *gherkin.DocString) (err error) {
 	}
 
 	if diff := deep.Equal(expected, f.response); diff != nil {
-		err = errors.New(strings.Join(diff, "\n"))
+		dmp := diffmatchpatch.New()
+		text1, _ := json.MarshalIndent(expected, "", " ")
+		text2, _ := json.MarshalIndent(f.response, "", " ")
+		diffs := dmp.DiffMain(string(text1), string(text2), true)
+		err = errors.New(dmp.DiffPrettyText(diffs))
 	}
 	return
 }
