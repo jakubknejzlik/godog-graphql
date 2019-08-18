@@ -5,7 +5,8 @@ services:
       - '8080:80'
     image: 'graphql/hello-world'
   test:
-    image: jakubknejzlik/godog-graphql
+    # image: jakubknejzlik/godog-graphql
+    build: .
     links:
       - hello
     volumes:

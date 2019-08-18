@@ -25,5 +25,5 @@ push: login
 	docker push $(TAG)
 
 test:
-	docker-compose up test
+	docker-compose up --build test
 	docker-compose down
