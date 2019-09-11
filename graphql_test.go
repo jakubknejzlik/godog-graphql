@@ -52,7 +52,7 @@ func (f *gqlFeature) theResponseShouldBe(arg1 *gherkin.DocString) (err error) {
 		text2, _ := json.MarshalIndent(f.response, "", " ")
 		// dmp := diffmatchpatch.New()
 		// diffs := dmp.DiffMain(string(text1), string(text2), true)
-		err = errors.New(fmt.Sprintf("Expected resposne: %s \n\nActual response: %s\n", text1, text2))
+		err = errors.New(fmt.Sprintf("Expected response: %s \n\nActual response: %s\n", text1, text2))
 	}
 	return
 }
