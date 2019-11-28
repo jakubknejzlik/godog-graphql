@@ -24,6 +24,7 @@ Feature: It should be possible to send query
             """
             graphql: Cannot query field "blah" on type "Query".
             """
+        And the error should not be empty
 
     Scenario: Query with variables
         When I have variables:
@@ -44,3 +45,4 @@ Feature: It should be possible to send query
                 "foo": "this is blah: xxx"
             }
             """
+        And the error should not be empty

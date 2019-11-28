@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 
-	// "github.com/machinebox/graphql"
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/go-test/deep"
@@ -50,8 +49,6 @@ func (f *gqlFeature) theResponseShouldBe(arg1 *gherkin.DocString) (err error) {
 	if diff := deep.Equal(expected, f.response); diff != nil {
 		text1, _ := json.MarshalIndent(expected, "", " ")
 		text2, _ := json.MarshalIndent(f.response, "", " ")
-		// dmp := diffmatchpatch.New()
-		// diffs := dmp.DiffMain(string(text1), string(text2), true)
 		err = errors.New(fmt.Sprintf("Expected response: %s \n\nActual response: %s\n", text1, text2))
 	}
 	return
@@ -61,11 +58,19 @@ func (f *gqlFeature) theErrorShouldBe(arg1 *gherkin.DocString) (err error) {
 	expected := arg1.Content
 
 	if f.error != nil && *f.error != expected {
-		// text1, _ := json.MarshalIndent(expected, "", " ")
-		// text2, _ := json.MarshalIndent(f.error, "", " ")
-		// dmp := diffmatchpatch.New()
-		// diffs := dmp.DiffMain(string(text1), string(text2), true)
 		err = errors.New(fmt.Sprintf("Expected error: %s \n\nActual error: %s\n", expected, *f.error))
+	}
+	return
+}
+func (f *gqlFeature) theErrorShouldBeEmpty() (err error) {
+	if f.error != nil {
+		err = errors.New(fmt.Sprintf("Expected error to be empty\n\nActual error: %s\n", *f.error))
+	}
+	return
+}
+func (f *gqlFeature) theErrorShouldNotBeEmpty() (err error) {
+	if f.error == nil {
+		err = errors.New(fmt.Sprintf("Expected error to not be empty, but it is nil\n"))
 	}
 	return
 }
@@ -86,4 +91,6 @@ func FeatureContext(s *godog.Suite) {
 	s.Step(`^I have variables:$`, feature.iHaveVariables)
 	s.Step(`^the response should be:$`, feature.theResponseShouldBe)
 	s.Step(`^the error should be:$`, feature.theErrorShouldBe)
+	s.Step(`^the error should be empty$`, feature.theErrorShouldBeEmpty)
+	s.Step(`^the error should not be empty$`, feature.theErrorShouldNotBeEmpty)
 }
