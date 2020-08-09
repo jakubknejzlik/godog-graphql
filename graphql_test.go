@@ -71,7 +71,7 @@ func (f *gqlFeature) theResponseShouldBe(arg1 *gherkin.DocString) (err error) {
 	}
 	diff := expected.Diff(response)
 	if len(diff) > 0 {
-		err = errors.New(fmt.Sprintf("Unexpected response, expected:\n%s\n\nActual response:\n%s\n\nDiff:\n%s", string(remarshaled), string(resp), diff.Render()))
+		err = errors.New(fmt.Sprintf("Unexpected response:\n%s\n\nDiff:\n%s", string(resp), diff.Render()))
 	}
 	return
 }
