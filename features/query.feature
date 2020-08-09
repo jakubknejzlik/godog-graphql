@@ -45,4 +45,4 @@ Feature: It should be possible to send query
                 "foo": "this is blah: xxx"
             }
             """
-        And the error should not be empty
+        And the error should be empty

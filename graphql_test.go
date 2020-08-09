@@ -9,8 +9,8 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/go-test/deep"
 	"github.com/jakubknejzlik/godog-graphql/graphql"
+	jd "github.com/josephburnett/jd/lib"
 )
 
 type gqlFeature struct {
@@ -40,16 +40,21 @@ func (f *gqlFeature) iHaveVariables(arg1 *gherkin.DocString) error {
 }
 
 func (f *gqlFeature) theResponseShouldBe(arg1 *gherkin.DocString) (err error) {
-	var expected interface{}
-	err = json.Unmarshal([]byte(arg1.Content), &expected)
+	expected, err := jd.ReadJsonString(arg1.Content)
 	if err != nil {
-		return
+		return nil
 	}
-
-	if diff := deep.Equal(expected, f.response); diff != nil {
-		text1, _ := json.MarshalIndent(expected, "", " ")
-		text2, _ := json.MarshalIndent(f.response, "", " ")
-		err = errors.New(fmt.Sprintf("Expected response: %s \n\nActual response: %s\n", text1, text2))
+	resp, err := json.Marshal(f.response)
+	if err != nil {
+		return nil
+	}
+	response, err := jd.ReadJsonString(string(resp))
+	if err != nil {
+		return nil
+	}
+	diff := expected.Diff(response)
+	if len(diff) > 0 {
+		err = errors.New(fmt.Sprintf("Invalid resposen %s", diff.Render()))
 	}
 	return
 }
