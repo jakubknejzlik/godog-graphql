@@ -37,11 +37,13 @@ Feature: It should be possible to send query
             """
             query ($blah: String!) {
             foo(blah: $blah)
+            foo2: foo(blah: $blah)
             }
             """
         Then the response should be:
             """
             {
+                "foo2": "this is blah: xxx",
                 "foo": "this is blah: xxx"
             }
             """

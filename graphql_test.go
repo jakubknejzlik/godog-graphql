@@ -39,8 +39,25 @@ func (f *gqlFeature) iHaveVariables(arg1 *gherkin.DocString) error {
 	return json.Unmarshal([]byte(arg1.Content), &f.variables)
 }
 
+func JsonRemarshal(bytes []byte) ([]byte, error) {
+	var ifce interface{}
+	err := json.Unmarshal(bytes, &ifce)
+	if err != nil {
+		return []byte{}, err
+	}
+	output, err := json.Marshal(ifce)
+	if err != nil {
+		return []byte{}, err
+	}
+	return output, nil
+}
+
 func (f *gqlFeature) theResponseShouldBe(arg1 *gherkin.DocString) (err error) {
-	expected, err := jd.ReadJsonString(arg1.Content)
+	remarshaled, err := JsonRemarshal([]byte(arg1.Content))
+	if err != nil {
+		return nil
+	}
+	expected, err := jd.ReadJsonString(string(remarshaled))
 	if err != nil {
 		return nil
 	}
@@ -54,7 +71,7 @@ func (f *gqlFeature) theResponseShouldBe(arg1 *gherkin.DocString) (err error) {
 	}
 	diff := expected.Diff(response)
 	if len(diff) > 0 {
-		err = errors.New(fmt.Sprintf("Unexpected response %s", diff.Render()))
+		err = errors.New(fmt.Sprintf("Unexpected response, expected:\n%s\n\nActual response:\n%s\n\nDiff:\n%s", string(remarshaled), string(resp), diff.Render()))
 	}
 	return
 }
