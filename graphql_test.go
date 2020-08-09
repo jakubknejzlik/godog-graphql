@@ -54,7 +54,7 @@ func (f *gqlFeature) theResponseShouldBe(arg1 *gherkin.DocString) (err error) {
 	}
 	diff := expected.Diff(response)
 	if len(diff) > 0 {
-		err = errors.New(fmt.Sprintf("Invalid resposen %s", diff.Render()))
+		err = errors.New(fmt.Sprintf("Unexpected response %s", diff.Render()))
 	}
 	return
 }
