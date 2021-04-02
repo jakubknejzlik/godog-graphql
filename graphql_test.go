@@ -17,6 +17,7 @@ type gqlFeature struct {
 	client    *graphql.Client
 	query     string
 	variables map[string]interface{}
+	headers   map[string]string
 	response  interface{}
 	error     *string
 }
@@ -27,7 +28,7 @@ func (f *gqlFeature) iSendQuery(arg1 *gherkin.DocString) error {
 	f.error = nil
 
 	ctx := context.Background()
-	err := f.client.SendQuery(ctx, f.query, f.variables, &f.response)
+	err := f.client.SendQuery(ctx, f.query, f.variables, f.headers, &f.response)
 	if err != nil {
 		_err := err.Error()
 		f.error = &_err
@@ -37,6 +38,9 @@ func (f *gqlFeature) iSendQuery(arg1 *gherkin.DocString) error {
 
 func (f *gqlFeature) iHaveVariables(arg1 *gherkin.DocString) error {
 	return json.Unmarshal([]byte(arg1.Content), &f.variables)
+}
+func (f *gqlFeature) iHaveHeaders(arg1 *gherkin.DocString) error {
+	return json.Unmarshal([]byte(arg1.Content), &f.headers)
 }
 
 func JsonRemarshal(bytes []byte) ([]byte, error) {
@@ -111,6 +115,7 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^I send query:$`, feature.iSendQuery)
 	s.Step(`^I have variables:$`, feature.iHaveVariables)
+	s.Step(`^I have headers:$`, feature.iHaveHeaders)
 	s.Step(`^the response should be:$`, feature.theResponseShouldBe)
 	s.Step(`^the error should be:$`, feature.theErrorShouldBe)
 	s.Step(`^the error should be empty$`, feature.theErrorShouldBeEmpty)
