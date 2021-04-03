@@ -22,6 +22,13 @@ type gqlFeature struct {
 	error     *string
 }
 
+func (f *gqlFeature) reset() {
+	f.query = ""
+	f.variables = nil
+	f.headers = nil
+	f.response = nil
+	f.error = nil
+}
 func (f *gqlFeature) iSendQuery(arg1 *gherkin.DocString) error {
 	f.query = arg1.Content
 	f.response = nil
@@ -37,9 +44,15 @@ func (f *gqlFeature) iSendQuery(arg1 *gherkin.DocString) error {
 }
 
 func (f *gqlFeature) iHaveVariables(arg1 *gherkin.DocString) error {
+	if arg1.Content == "" {
+		f.variables = nil
+	}
 	return json.Unmarshal([]byte(arg1.Content), &f.variables)
 }
 func (f *gqlFeature) iHaveHeaders(arg1 *gherkin.DocString) error {
+	if arg1.Content == "" {
+		f.headers = nil
+	}
 	return json.Unmarshal([]byte(arg1.Content), &f.headers)
 }
 
@@ -102,6 +115,7 @@ func (f *gqlFeature) theErrorShouldNotBeEmpty() (err error) {
 }
 
 func FeatureContext(s *godog.Suite) {
+	fmt.Println("context??")
 	URL := os.Getenv("GRAPHQL_URL")
 	if URL == "" {
 		panic(fmt.Errorf("Missing required environment variable GRAPHQL_URL"))
@@ -112,6 +126,10 @@ func FeatureContext(s *godog.Suite) {
 		panic(err)
 	}
 	feature := &gqlFeature{client: c}
+
+	s.BeforeScenario(func(i interface{}) {
+		feature.reset()
+	})
 
 	s.Step(`^I send query:$`, feature.iSendQuery)
 	s.Step(`^I have variables:$`, feature.iHaveVariables)
